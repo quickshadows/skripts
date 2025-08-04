@@ -74,8 +74,8 @@ curl "https://timeweb.cloud/api/v1/databases/${DB_ID}/admins/${ID_USER}" \
   -X 'PATCH' \
   -H 'content-type: application/json' \
   -H "authorization: Bearer ${TOKEN}" \
-  --data-raw '{"privileges":["INSERT","UPDATE","DELETE","CREATE","TRUNCATE","REFERENCES","TRIGGER","TEMPORARY","CREATEDB"],"instance_id":'"${INSTANCE_ID}"',"for_all":false}'
-  echo -e "\n✔ Пользователь $ID_USER обработан"
+  --data-raw '{"privileges":["INSERT","UPDATE","DELETE","CREATE","TRUNCATE","REFERENCES","TRIGGER","TEMPORARY","CREATEDB"],"instance_id":'"${INSTANCE_ID}"',"for_all":false}' > /dev/null 2>&1
+#  echo -e "\n✔ Пользователь $ID_USER обработан"
   done
 
   for ID_USER in "${ID_USERS[@]}"; do
@@ -83,8 +83,8 @@ curl "https://timeweb.cloud/api/v1/databases/${DB_ID}/admins/${ID_USER}" \
   -X 'PATCH' \
   -H 'content-type: application/json' \
   -H "authorization: Bearer ${TOKEN}" \
-  --data-raw '{"privileges":["SELECT","INSERT","UPDATE","DELETE","CREATE","TRUNCATE","REFERENCES","TRIGGER","TEMPORARY","CREATEDB"],"instance_id":'"${INSTANCE_ID}"',"for_all":false}'
-  echo -e "\n✔ Пользователь $ID_USER обработан"
+  --data-raw '{"privileges":["SELECT","INSERT","UPDATE","DELETE","CREATE","TRUNCATE","REFERENCES","TRIGGER","TEMPORARY","CREATEDB"],"instance_id":'"${INSTANCE_ID}"',"for_all":false}' > /dev/null 2>&1
+#  echo -e "\n✔ Пользователь $ID_USER обработан"
 done
   sleep 60
 }
@@ -196,15 +196,12 @@ on_prava
 
 # INSERT
 test_query_from_user "INSERT" "INSERT INTO tmp_created_table (id) VALUES ('1');"
-on_prava
 
 # SELECT
 test_query_from_user "SELECT" "SELECT * FROM tmp_created_table LIMIT 1;"
-on_prava
 
 # UPDATE
 test_query_from_user "UPDATE" "UPDATE tmp_created_table SET id = '3' WHERE id = '1';"
-on_prava
 
 # TRUNCATE
 test_query_from_user "TRUNCATE" "TRUNCATE TABLE tmp_created_table;
@@ -214,7 +211,7 @@ on_prava
 # REFERENCES
 
 test_query_from_gen_user "REFERENCES" "
-DROP TABLE IF EXISTS ref_target, ref_source;
+DROP TABLE IF EXISTS ref_target;
 CREATE TABLE ref_target (id INT PRIMARY KEY);
 "
 on_prava
@@ -226,8 +223,8 @@ CREATE TABLE ref_source (
 "
 on_prava
 
-test_query_from_gen_user "REFERENCES" "
-DROP TABLE IF EXISTS ref_target, ref_source;
+test_query_from_user "REFERENCES" "
+DROP TABLE IF EXISTS ref_source;
 "
 on_prava
 
@@ -255,7 +252,6 @@ EXECUTE FUNCTION trg_fn();
 
 INSERT INTO trg_table (val) VALUES ('test');
 "
-on_prava
 
 test_query_from_gen_user "TRIGGER" "
 DROP TABLE trg_table;
@@ -268,7 +264,6 @@ on_prava
 
 # DELETE
 test_query_from_user "DELETE" "DELETE FROM tmp_created_table WHERE id= '1';"
-on_prava
 
 #DROP
 test_query_from_gen_user "DROP" "DROP TABLE tmp_created_table;"
