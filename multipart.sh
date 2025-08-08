@@ -83,3 +83,18 @@ if ! jq . "$TEMP_JSON_FILE" > /dev/null; then
   echo "Ошибка: некорректный JSON для завершения загрузки."
   rm -f "$TEMP_JSON_FILE"
   exit 1
+fi
+
+# Завершение загрузки
+aws s3api complete-multipart-upload \
+  --bucket "$BUCKET" \
+  --key "$KEY" \
+  --upload-id "$UPLOAD_ID" \
+  --multipart-upload file://"$TEMP_JSON_FILE" \
+  --region "$REGION" \
+  --endpoint-url "$ENDPOINT_URL"
+
+# Удаляем временный файл
+rm -f "$TEMP_JSON_FILE"
+
+echo "✅ Загрузка успешно завершена!"
