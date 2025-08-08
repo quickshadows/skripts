@@ -74,19 +74,12 @@ PARTS_JSON+="]"
 # === Завершение мультипарт-загрузки ===
 echo "Завершаю загрузку..."
 
+# Сохраним JSON в временный файл
+TEMP_JSON_FILE=$(mktemp)
+echo "$PARTS_JSON" > "$TEMP_JSON_FILE"
+
 # Проверка корректности JSON
-if ! echo "$PARTS_JSON" | jq . > /dev/null; then
+if ! jq . "$TEMP_JSON_FILE" > /dev/null; then
   echo "Ошибка: некорректный JSON для завершения загрузки."
+  rm -f "$TEMP_JSON_FILE"
   exit 1
-fi
-
-# Завершение загрузки
-aws s3api complete-multipart-upload \
-  --bucket "$BUCKET" \
-  --key "$KEY" \
-  --upload-id "$UPLOAD_ID" \
-  --multipart-upload "$PARTS_JSON" \
-  --region "$REGION" \
-  --endpoint-url "$ENDPOINT_URL"
-
-echo "✅ Загрузка успешно завершена!"
