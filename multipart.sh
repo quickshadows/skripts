@@ -13,7 +13,7 @@ ENDPOINT_URL="https://s3.twcstorage.ru"
 # === Создание большого файла (1 ГБ) ===
 if [ ! -f "$FILE" ]; then
   echo "Создаю файл размером 1 ГБ: $FILE"
-  dd if=/dev/urandom of="$FILE" bs=64M count=16 status=progress
+  dd if=/dev/urandom of="$FILE" bs=128M count=8 status=progress
 fi
 
 # === Инициализация мультипарт-загрузки ===
