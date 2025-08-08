@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#set -e  # можно включить, если хочешь, чтобы скрипт останавливался при ошибках
+#set -e  # включить при отладке
 
 # === Настройки ===
 BUCKET="31d5eb06-test-upload"
@@ -61,7 +61,7 @@ for (( i=0; i<$PARTS_COUNT; i++ )); do
     --endpoint-url "$ENDPOINT_URL" \
     --output json)
 
-  # Берем ETag с кавычками, чтобы AWS принял JSON
+  # ETag оставляем как вернул AWS (с кавычками)
   ETag=$(echo "$RESPONSE" | jq '.ETag')
 
   PARTS_JSON+="{\"PartNumber\":$PART_NUMBER,\"ETag\":$ETag}"
@@ -73,21 +73,23 @@ done
 
 PARTS_JSON+="]"
 
+# === Оборачиваем в объект с ключом Parts ===
+FINAL_JSON="{\"Parts\": $PARTS_JSON}"
+
 # === Завершение мультипарт-загрузки ===
 echo "Завершаю загрузку..."
 
-# Сохраним JSON в временный файл
 TEMP_JSON_FILE=$(mktemp)
-echo "$PARTS_JSON" > "$TEMP_JSON_FILE"
+echo "$FINAL_JSON" > "$TEMP_JSON_FILE"
 
-# Проверка корректности JSON
+# Проверка JSON
 if ! jq . "$TEMP_JSON_FILE" > /dev/null; then
   echo "Ошибка: некорректный JSON для завершения загрузки."
   rm -f "$TEMP_JSON_FILE"
   exit 1
 fi
 
-# Завершение загрузки
+# Завершение
 aws s3api complete-multipart-upload \
   --bucket "$BUCKET" \
   --key "$KEY" \
@@ -96,7 +98,6 @@ aws s3api complete-multipart-upload \
   --region "$REGION" \
   --endpoint-url "$ENDPOINT_URL"
 
-# Удаляем временный файл
 rm -f "$TEMP_JSON_FILE"
 
 echo "✅ Загрузка успешно завершена!"
