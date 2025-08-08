@@ -6,7 +6,7 @@
 BUCKET="50c17271-multipart"
 KEY="large-upload.bin"
 FILE="large-file.bin"
-PART_SIZE_MB=200   # Размер одной части в MB (минимум 5)
+PART_SIZE_MB=128   # Размер одной части в MB (минимум 5)
 REGION="ru-1"
 ENDPOINT_URL="https://s3.twcstorage.ru"
 
