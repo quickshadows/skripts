@@ -3,7 +3,7 @@
 #set -e
 
 # === Настройки ===
-BUCKET="50c17271-multipart"
+BUCKET="31d5eb06-test-upload"
 KEY="large-upload.bin"
 FILE="large-file.bin"
 PART_SIZE_MB=128   # Размер одной части в MB (минимум 5)
@@ -48,7 +48,7 @@ for (( i=0; i<$PARTS_COUNT; i++ )); do
   PART_FILE="$TMP_DIR/part-$PART_NUMBER"
 
   echo "Создаю часть $PART_NUMBER..."
-  dd if="$FILE" of="$PART_FILE" bs=1 skip=$OFFSET count=$PART_SIZE iflag=skip_bytes,count_bytes status=none
+  dd if="$FILE" of="$PART_FILE" bs=128 skip=$OFFSET count=$PART_SIZE iflag=skip_bytes,count_bytes status=none
 
   echo "Загружаю часть $PART_NUMBER..."
   RESPONSE=$(aws s3api upload-part \
@@ -73,6 +73,14 @@ PARTS_JSON+="]"
 
 # === Завершение мультипарт-загрузки ===
 echo "Завершаю загрузку..."
+
+# Проверка корректности JSON
+if ! echo "$PARTS_JSON" | jq . > /dev/null; then
+  echo "Ошибка: некорректный JSON для завершения загрузки."
+  exit 1
+fi
+
+# Завершение загрузки
 aws s3api complete-multipart-upload \
   --bucket "$BUCKET" \
   --key "$KEY" \
