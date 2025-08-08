@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#set -e
+#set -e  # можно включить, если хочешь, чтобы скрипт останавливался при ошибках
 
 # === Настройки ===
 BUCKET="31d5eb06-test-upload"
@@ -48,7 +48,7 @@ for (( i=0; i<$PARTS_COUNT; i++ )); do
   PART_FILE="$TMP_DIR/part-$PART_NUMBER"
 
   echo "Создаю часть $PART_NUMBER..."
-  dd if="$FILE" of="$PART_FILE" bs=128 skip=$OFFSET count=$PART_SIZE iflag=skip_bytes,count_bytes status=none
+  dd if="$FILE" of="$PART_FILE" bs=1 skip=$OFFSET count=$PART_SIZE iflag=skip_bytes,count_bytes status=none
 
   echo "Загружаю часть $PART_NUMBER..."
   RESPONSE=$(aws s3api upload-part \
@@ -61,7 +61,9 @@ for (( i=0; i<$PARTS_COUNT; i++ )); do
     --endpoint-url "$ENDPOINT_URL" \
     --output json)
 
-  ETag=$(echo "$RESPONSE" | jq -r '.ETag')
+  # Берем ETag с кавычками, чтобы AWS принял JSON
+  ETag=$(echo "$RESPONSE" | jq '.ETag')
+
   PARTS_JSON+="{\"PartNumber\":$PART_NUMBER,\"ETag\":$ETag}"
 
   if [ $PART_NUMBER -lt $PARTS_COUNT ]; then
