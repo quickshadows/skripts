@@ -75,28 +75,28 @@ create_database() {
 floating_ip=$(get_floating_ip)
 
 # Создание баз данных для разных версий
-create_database "MySQL80 api stage" "mysql" "519" "192.168.0.201"
-create_database "MySQL84 api stage" "mysql8_4" "519" "192.168.0.202"
+create_database "MySQL80 api stage" "mysql" "519" "192.168.1.201"
+create_database "MySQL84 api stage" "mysql8_4" "519" "192.168.1.202"
 
-create_database "PostgreSQL 14 api stage" "postgres14" "521" "192.168.0.203"
-create_database "PostgreSQL 15 api stage" "postgres15" "521" "192.168.0.203"
-create_database "PostgreSQL 16 api stage" "postgres16" "521" "192.168.0.204"
-create_database "PostgreSQL 17 api stage" "postgres17" "521" "192.168.0.205"
+create_database "PostgreSQL 14 api stage" "postgres14" "521" "192.168.1.203"
+create_database "PostgreSQL 15 api stage" "postgres15" "521" "192.168.1.203"
+create_database "PostgreSQL 16 api stage" "postgres16" "521" "192.168.1.204"
+create_database "PostgreSQL 17 api stage" "postgres17" "521" "192.168.1.205"
 
-create_database "redis7 api stage" "redis7" "541" "192.168.0.206"
-create_database "redis81 api stage" "redis8_1" "541" "192.168.0.207"
+create_database "redis7 api stage" "redis7" "541" "192.168.1.206"
+create_database "redis81 api stage" "redis8_1" "541" "192.168.1.207"
 
-create_database "mongodb7 api stage" "mongodb7" "521" "192.168.0.208"
-create_database "mongodb8 api stage" "mongodb8_0" "521" "192.168.0.209"
+create_database "mongodb7 api stage" "mongodb7" "521" "192.168.1.208"
+create_database "mongodb8 api stage" "mongodb8_0" "521" "192.168.1.209"
 
-create_database "opensearch2_19 api stage" "opensearch2_19" "747" "192.168.0.210"
+create_database "opensearch2_19 api stage" "opensearch2_19" "747" "192.168.1.210"
 
-create_database "clickhouse api stage" "clickhouse" "1229" "192.168.0.211"
-create_database "clickhouse api stage" "clickhouse24" "1229" "192.168.0.212"
-create_database "clickhouse api stage" "clickhouse25" "1229" "192.168.0.213"
+create_database "clickhouse api stage" "clickhouse" "1229" "192.168.1.211"
+create_database "clickhouse api stage" "clickhouse24" "1229" "192.168.1.212"
+create_database "clickhouse api stage" "clickhouse25" "1229" "192.168.1.213"
 
-create_database "kafka api stage" "kafka" "759" "192.168.0.214"
+create_database "kafka api stage" "kafka" "759" "192.168.1.214"
 
-create_database "rabbitmq4_0 api stage" "rabbitmq4_0" "805" "192.168.0.215"
+create_database "rabbitmq4_0 api stage" "rabbitmq4_0" "805" "192.168.1.215"
 
 
