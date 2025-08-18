@@ -24,12 +24,11 @@ get_floating_ip() {
 }
 
 # Функция для создания базы данных
-create_database() 
+create_database() {
   local db_name=$1
   local db_type=$2
   local preset_id=$3
   local local_ip=$4
-
 
   response_database=$(curl -s -X POST \
   -H "Content-Type: application/json" \
@@ -37,7 +36,7 @@ create_database()
   -d "{
     \"name\": \"$db_name\",
     \"type\": \"$db_type\",
-    \"preset_id\": 1161,
+    \"preset_id\": $preset_id,
     \"availability_zone\": \"msk-1\",
     \"hash_type\": \"caching_sha2\",
     \"project_id\": 103757,
@@ -70,7 +69,7 @@ create_database()
     echo "Ответ API: $response_database"
     exit 1
   fi
-
+}
 
 # Получение плавающего IP
 floating_ip=$(get_floating_ip)
@@ -79,7 +78,7 @@ floating_ip=$(get_floating_ip)
 create_database "MySQL80 api stage" "mysql8_0" "519" "192.168.0.201"
 create_database "MySQL84 api stage" "mysql8_4" "519" "192.168.0.202"
 
-create_database "PostgreSQL 15 api stage" "postgres14" "521" "192.168.0.203"
+create_database "PostgreSQL 14 api stage" "postgres14" "521" "192.168.0.203"
 create_database "PostgreSQL 15 api stage" "postgres15" "521" "192.168.0.203"
 create_database "PostgreSQL 16 api stage" "postgres16" "521" "192.168.0.204"
 create_database "PostgreSQL 17 api stage" "postgres17" "521" "192.168.0.205"
@@ -99,4 +98,5 @@ create_database "clickhouse api stage" "clickhouse25" "1229" "192.168.0.213"
 create_database "kafka api stage" "kafka" "759" "192.168.0.214"
 
 create_database "rabbitmq4_0 api stage" "rabbitmq4_0" "805" "192.168.0.215"
+
 
