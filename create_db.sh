@@ -37,7 +37,7 @@ create_database() {
     \"name\": \"$db_name\",
     \"type\": \"$db_type\",
     \"preset_id\": $preset_id,
-    \"availability_zone\": \"msk-1\",
+    \"availability_zone\": \"spb-3\",
     \"hash_type\": \"caching_sha2\",
     \"project_id\": 103757,
     \"auto_backups\": {
