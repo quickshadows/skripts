@@ -7,7 +7,7 @@ get_floating_ip() {
   -H "Authorization: Bearer $TIMEWEB_CLOUD_TOKEN" \
   -d '{
     "is_ddos_guard": false,
-    "availability_zone": "msk-1"
+    "availability_zone": "spb-3"
   }' \
   "https://api.timeweb.cloud/api/v1/floating-ips")
 
