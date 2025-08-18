@@ -73,13 +73,13 @@ floating_ip=$(get_floating_ip)
 create_database "MySQL84 api stage" "mysql8_4" "519" "192.168.0.202"
 floating_ip=$(get_floating_ip)
 
-create_database "PostgreSQL 14 api stage" "postgres14" "521" "192.168.0.203"
+create_database "PostgreSQL 14 api stage" "postgres14" "1175" "192.168.0.203"
 floating_ip=$(get_floating_ip)
-create_database "PostgreSQL 15 api stage" "postgres15" "521" "192.168.0.203"
+create_database "PostgreSQL 15 api stage" "postgres15" "1175" "192.168.0.203"
 floating_ip=$(get_floating_ip)
-create_database "PostgreSQL 16 api stage" "postgres16" "521" "192.168.0.204"
+create_database "PostgreSQL 16 api stage" "postgres16" "1175" "192.168.0.204"
 floating_ip=$(get_floating_ip)
-create_database "PostgreSQL 17 api stage" "postgres17" "521" "192.168.0.205"
+create_database "PostgreSQL 17 api stage" "postgres17" "1175" "192.168.0.205"
 floating_ip=$(get_floating_ip)
 
 create_database "redis7 api stage" "redis7" "541" "192.168.0.206"
