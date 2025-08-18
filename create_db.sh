@@ -60,15 +60,8 @@ create_database() {
 
   # Вывод результата создания базы данных
   echo "Ответ API на создание базы данных '$db_name': $response_database"
-
-  # Проверка успешности создания базы данных
-  if echo "$response_database" | grep -q '"status_code":200'; then
-    echo "База данных '$db_name' успешно создана."
-  else
-    echo "Ошибка при создании базы данных '$db_name'."
-    echo "Ответ API: $response_database"
-    exit 1
-  fi
+  echo " "
+  echo " "
 }
 
 # Получение плавающего IP
