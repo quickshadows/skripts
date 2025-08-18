@@ -51,7 +51,7 @@ create_database() {
       \"for_all\": false
     },
     \"network\": {
-      \"id\": \"network-0658219a30114b9790c0b2f6bd2294ce\",
+      \"id\": \"network-3654798e575f4dd3b9ad3e9dec940ead\",
       \"floating_ip\": \"$floating_ip\",
       \"local_ip\": \"$local_ip\"
     }
