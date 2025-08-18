@@ -87,9 +87,9 @@ floating_ip=$(get_floating_ip)
 create_database "redis81 api stage" "redis8_1" "541" "192.168.0.207"
 floating_ip=$(get_floating_ip)
 
-create_database "mongodb7 api stage" "mongodb7" "521" "192.168.0.208"
+create_database "mongodb7 api stage" "mongodb7" "515" "192.168.0.208"
 floating_ip=$(get_floating_ip)
-create_database "mongodb8 api stage" "mongodb8_0" "521" "192.168.0.209"
+create_database "mongodb8 api stage" "mongodb8_0" "515" "192.168.0.209"
 floating_ip=$(get_floating_ip)
 
 create_database "opensearch2_19 api stage" "opensearch2_19" "747" "192.168.0.210"
