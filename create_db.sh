@@ -75,7 +75,7 @@ create_database() {
 floating_ip=$(get_floating_ip)
 
 # Создание баз данных для разных версий
-create_database "MySQL80 api stage" "mysql8_0" "519" "192.168.0.201"
+create_database "MySQL80 api stage" "mysql" "519" "192.168.0.201"
 create_database "MySQL84 api stage" "mysql8_4" "519" "192.168.0.202"
 
 create_database "PostgreSQL 14 api stage" "postgres14" "521" "192.168.0.203"
