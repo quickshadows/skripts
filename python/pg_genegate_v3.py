@@ -8,7 +8,7 @@ import os
 
 # ---------- Настройки ----------
 DB_CONNS = [
-    "dbname=default_db user=gen_user password=JISDlsf!dn*5993) host=147.45.110.148",
+    "dbname=default_db user=gen_user password=Passwd123 host=147.45.110.148",
     "dbname=default_db user=gen_user password=Passwd123 host=81.200.144.241",
 ]
 
