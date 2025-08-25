@@ -108,7 +108,7 @@ databases=(
 )
 
 for db in "${databases[@]}"; do
-  db_name=$(echo "$db" | awk '{print $1" "$2" "$3" $4}')
+  db_name=$(echo "$db" | awk '{print $1" "$2" "$3" "$4}')
   db_type=$(echo "$db" | awk '{print $5}')
   preset_id=$(echo "$db" | awk '{print $6}')
 
