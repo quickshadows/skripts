@@ -70,18 +70,18 @@ create_database() {
 floating_ip=$(get_floating_ip)
 
 # Создание баз данных для разных версий
-create_database "MySQL80 api buckup" "mysql" "519" "192.168.0.211"
-floating_ip=$(get_floating_ip)
-create_database "MySQL84 api buckup" "mysql8_4" "519" "192.168.0.212"
-floating_ip=$(get_floating_ip)
+# create_database "MySQL80 api buckup" "mysql" "519" "192.168.0.211"
+# floating_ip=$(get_floating_ip)
+# create_database "MySQL84 api buckup" "mysql8_4" "519" "192.168.0.212"
+# floating_ip=$(get_floating_ip)
 
-create_database "PostgreSQL 14 api buckup" "postgres14" "1175" "192.168.0.213"
+create_database "PostgreSQL 14 api buckup" "postgres14" "1175" "192.168.0.203"
 floating_ip=$(get_floating_ip)
-create_database "PostgreSQL 15 api buckup" "postgres15" "1175" "192.168.0.213"
+create_database "PostgreSQL 15 api buckup" "postgres15" "1175" "192.168.0.206"
 floating_ip=$(get_floating_ip)
-create_database "PostgreSQL 16 api buckup" "postgres16" "1175" "192.168.0.214"
+create_database "PostgreSQL 16 api buckup" "postgres16" "1175" "192.168.0.204"
 floating_ip=$(get_floating_ip)
-create_database "PostgreSQL 17 api buckup" "postgres17" "1175" "192.168.0.215"
-floating_ip=$(get_floating_ip)
+create_database "PostgreSQL 17 api buckup" "postgres17" "1175" "192.168.0.205"
+# floating_ip=$(get_floating_ip)
 
 
