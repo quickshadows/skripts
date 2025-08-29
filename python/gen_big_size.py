@@ -109,16 +109,13 @@ def hex_bytes(n: int) -> str:
 
 
 def users_rows(n):
-    seen = set()
-    for _ in range(n):
-        while True:
-            username = f"user_{i}_{fake.user_name()}"
-            if username not in seen:
-                seen.add(username)
-                break
-        email = fake.email()
-        created_at = fake.date_time_this_year()
+    """Генератор пользователей"""
+    for i in range(1, n + 1):
+        username = fake.user_name() + str(i)  # добавляем i для уникальности
+        email = f"user{i}@example.com"        # чтобы точно не было дублей
+        created_at = fake.date_time_this_decade()
         yield (username, email, created_at)
+
 
 
 def profiles_rows(n_users: int) -> Iterator[str]:
@@ -516,13 +513,20 @@ INDEXES = [
 # COPY-помощники
 # -----------------------------
 
-def copy_iter(conn: PGConnection, table: str, columns: List[str], rows_iter: Iterator[str]):
-    cols = ",".join(columns)
-    sql = f"COPY {table} ({cols}) FROM STDIN WITH (FORMAT CSV, DELIMITER ',', QUOTE '\"' )"
-    f = IterableIO(rows_iter)
+def copy_iter(conn, table, columns, rows):
+    """COPY через STDIN"""
     with conn.cursor() as cur:
-        cur.copy_expert(sql, f)
+        sql = f"""
+        COPY {table} ({", ".join(columns)})
+        FROM STDIN WITH (FORMAT csv, DELIMITER E'\t', NULL '')
+        """
+        with io.StringIO() as f:
+            for row in rows:
+                f.write("\t".join(map(str, row)) + "\n")
+            f.seek(0)
+            cur.copy_expert(sql, f)
     conn.commit()
+
 
 
 def exec_sql(conn: PGConnection, sql: str):
