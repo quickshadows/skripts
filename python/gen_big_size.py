@@ -108,13 +108,17 @@ def hex_bytes(n: int) -> str:
 # предполагаем, что таблицы пустые, и id будут 1..N в порядке вставки.
 
 
-def users_rows(n_users: int) -> Iterator[str]:
-    # columns: username,email,created_at
-    for _ in range(n_users):
-        username = csv_escape(fake.user_name())
-        email = csv_escape(fake.unique.email())
-        created = rand_ts().isoformat(sep=" ")
-        yield f"{username},{email},{created}\n"
+def users_rows(n):
+    seen = set()
+    for _ in range(n):
+        while True:
+            username = f"user_{i}_{fake.user_name()}"
+            if username not in seen:
+                seen.add(username)
+                break
+        email = fake.email()
+        created_at = fake.date_time_this_year()
+        yield (username, email, created_at)
 
 
 def profiles_rows(n_users: int) -> Iterator[str]:
