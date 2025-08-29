@@ -514,7 +514,7 @@ INDEXES = [
 
 def copy_iter(conn: PGConnection, table: str, columns: List[str], rows_iter: Iterator[str]):
     cols = ",".join(columns)
-    sql = f"COPY {table} ({cols}) FROM STDIN WITH (FORMAT CSV, DELIMITER ',', QUOTE '"' )"
+    sql = f"COPY {table} ({cols}) FROM STDIN WITH (FORMAT CSV, DELIMITER ',', QUOTE '\"' )"
     f = IterableIO(rows_iter)
     with conn.cursor() as cur:
         cur.copy_expert(sql, f)
