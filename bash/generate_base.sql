@@ -77,6 +77,7 @@ FROM (
     (SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5) t2,
     (SELECT @rownum := 0) t3
 ) AS numbers
+WHERE FLOOR(1 + RAND() * 100000) <= (SELECT COUNT(*) FROM Users)  -- Убедитесь, что UserID существует
 LIMIT 200000;  -- 200,000 заказов
 
 -- Заполнение таблицы деталей заказа
