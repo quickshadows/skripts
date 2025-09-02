@@ -105,10 +105,3 @@ FROM (
     (SELECT @rownum := 0) t3
 ) AS numbers
 LIMIT 200000;  -- 200,000 записей для увеличения объема
-
--- Проверка размера базы данных
-
-SELECT table_schema "Database", 
-       SUM(data_length + index_length) / 1024 / 1024 "Size (MB)" 
-FROM information_schema.tables 
-GROUP BY table_schema;
