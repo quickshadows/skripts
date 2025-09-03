@@ -106,9 +106,9 @@ CREATE TABLE IF NOT EXISTS products (
     stock INT,
     vendor VARCHAR(150),
     created_at DATETIME,
-    INDEX(idx_sku(64)),
-    INDEX(idx_category),
-    INDEX(idx_vendor(64))
+    INDEX idx_sku (sku(64)),
+    INDEX idx_category (category),
+    INDEX idx_vendor (vendor(64))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 """,
 
@@ -124,9 +124,9 @@ CREATE TABLE IF NOT EXISTS orders (
     total DECIMAL(12,4),
     status VARCHAR(50),
     created_at DATETIME,
-    INDEX(idx_user_id),
-    INDEX(idx_product_id),
-    INDEX(idx_status)
+    INDEX idx_user_id (user_id),
+    INDEX idx_product_id (product_id),
+    INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 """,
 
@@ -141,9 +141,9 @@ CREATE TABLE IF NOT EXISTS logs (
     message TEXT,
     context JSON,
     created_at DATETIME,
-    INDEX(idx_level),
-    INDEX(idx_service(60)),
-    INDEX(idx_created_at)
+    INDEX idx_level (level),
+    INDEX idx_service (service(60)),
+    INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 """,
 
@@ -159,10 +159,10 @@ CREATE TABLE IF NOT EXISTS audit_trail (
     new_value TEXT,
     ip VARCHAR(45),
     created_at DATETIME,
-    INDEX(idx_user_id),
-    INDEX(idx_object_type(32)),
-    INDEX(idx_action(32)),
-    INDEX(idx_created_at)
+    INDEX idx_user_id (user_id),
+    INDEX idx_object_type (object_type(32)),
+    INDEX idx_action (action(32)),
+    INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 """,
 
@@ -176,8 +176,8 @@ CREATE TABLE IF NOT EXISTS files (
     content_base64 MEDIUMTEXT,
     metadata JSON,
     created_at DATETIME,
-    INDEX(idx_owner_id),
-    INDEX(idx_filename(120))
+    INDEX idx_owner_id (owner_id),
+    INDEX idx_filename (filename(120))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPRESSED;
 """,
 
@@ -190,8 +190,8 @@ CREATE TABLE IF NOT EXISTS metrics (
     tags JSON,
     sample_rate INT,
     created_at DATETIME,
-    INDEX(idx_metric_name(100)),
-    INDEX(idx_ts)
+    INDEX idx_metric_name (metric_name(100)),
+    INDEX idx_ts (ts)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 """,
 
@@ -205,8 +205,8 @@ CREATE TABLE IF NOT EXISTS messages (
     attachments JSON,
     is_read TINYINT,
     created_at DATETIME,
-    INDEX(idx_from_user),
-    INDEX(idx_to_user),
+    INDEX idx_from_user (from_user),
+    INDEX idx_to_user (to_user),
     FULLTEXT KEY ft_subject_body (subject, body)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 """,
@@ -219,8 +219,8 @@ CREATE TABLE IF NOT EXISTS sessions (
     data JSON,
     created_at DATETIME,
     expires_at DATETIME,
-    INDEX(idx_user_id),
-    INDEX(idx_expires_at)
+    INDEX idx_user_id (user_id),
+    INDEX idx_expires_at (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 """,
 
@@ -235,9 +235,9 @@ CREATE TABLE IF NOT EXISTS payments (
     status VARCHAR(80),
     details TEXT,
     created_at DATETIME,
-    INDEX(idx_order_id),
-    INDEX(idx_user_id),
-    INDEX(idx_status)
+    INDEX idx_order_id (order_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 """
 }
