@@ -38,7 +38,7 @@ DB = {
 # -----------------------
 # Параметры генерации
 # -----------------------
-TARGET_GB = 8.0           # целевой размер базы в ГБ (измените: 5..30)
+TARGET_GB = 1.0           # целевой размер базы в ГБ (измените: 5..30)
 MODE = "insert"           # только 'insert' поддержан по умолчанию (без LOAD DATA)
 BATCH_SIZE = 1000         # строки за INSERT executemany
 COMMIT_EVERY = 20000      # количество строк до вызова conn.commit()
@@ -304,7 +304,7 @@ def gen_product(i):
     stock = random.randint(0, 10000)
     vendor = rnd_string(6, 40)
     created = datetime.now() - timedelta(days=random.randint(0, 3650))
-    return (sku, name, category, pymysql.converters.escape_string(str(attributes)), description, price, stock, vendor, created.strftime("%Y-%m-%d %H:%M:%S"))
+    return (sku, name, category, json.dumps(attributes, ensure_ascii=False), description, price, stock, vendor, created.strftime("%Y-%m-%d %H:%M:%S"))
 
 def gen_order(i, max_user_id, max_product_id):
     user_id = random.randint(1, max(1, max_user_id))
@@ -327,7 +327,7 @@ def gen_log(i):
     message = rnd_text(300, 2500)
     context = rnd_json_kv(6, depth=2)
     created = datetime.now() - timedelta(seconds=random.randint(0, 60*60*24*365))
-    return (level, service, host, pid, thread, message, pymysql.converters.escape_string(str(context)), created.strftime("%Y-%m-%d %H:%M:%S"))
+    return (level, service, host, pid, thread, message, json.dumps(context, ensure_ascii=False), created.strftime("%Y-%m-%d %H:%M:%S"))
 
 def gen_audit(i):
     user_id = random.randint(1, 1000000)
@@ -339,7 +339,7 @@ def gen_audit(i):
     new = rnd_text(50, 800)
     ip = f"{random.randint(1,255)}.{random.randint(0,255)}.{random.randint(0,255)}.{random.randint(0,255)}"
     created = datetime.now() - timedelta(days=random.randint(0, 3650))
-    return (user_id, object_type, object_id, action, pymysql.converters.escape_string(str(payload)), old, new, ip, created.strftime("%Y-%m-%d %H:%M:%S"))
+    return (user_id, object_type, object_id, action, json.dumps(payload, ensure_ascii=False), old, new, ip, created.strftime("%Y-%m-%d %H:%M:%S"))
 
 def gen_file(i):
     owner_id = random.randint(1, 1000000)
@@ -352,7 +352,7 @@ def gen_file(i):
     b64 = base64.b64encode(b).decode('ascii')
     metadata = rnd_json_kv(6, depth=1)
     created = datetime.now() - timedelta(days=random.randint(0, 3650))
-    return (owner_id, filename, mime, size, b64, pymysql.converters.escape_string(str(metadata)), created.strftime("%Y-%m-%d %H:%M:%S"))
+    return (owner_id, filename, mime, size, b64, json.dumps(metadata, ensure_ascii=False), created.strftime("%Y-%m-%d %H:%M:%S"))
 
 def gen_metric(i):
     metric_name = random.choice(["cpu.usage","mem.usage","disk.io","http.requests","db.connections","latency"])
@@ -361,7 +361,7 @@ def gen_metric(i):
     tags = rnd_json_kv(5, depth=1)
     sample_rate = random.choice([1,5,10,60])
     created = ts
-    return (metric_name, ts.strftime("%Y-%m-%d %H:%M:%S"), value, pymysql.converters.escape_string(str(tags)), sample_rate, created.strftime("%Y-%m-%d %H:%M:%S"))
+    return (metric_name, ts.strftime("%Y-%m-%d %H:%M:%S"), value, json.dumps(tags, ensure_ascii=False), sample_rate, created.strftime("%Y-%m-%d %H:%M:%S"))
 
 def gen_message(i, max_user_id):
     from_user = random.randint(1, max(1, max_user_id))
@@ -371,7 +371,7 @@ def gen_message(i, max_user_id):
     attachments = rnd_json_kv(3, depth=1)
     is_read = random.choice([0,1])
     created = datetime.now() - timedelta(days=random.randint(0, 3650))
-    return (from_user, to_user, subject, body, pymysql.converters.escape_string(str(attachments)), is_read, created.strftime("%Y-%m-%d %H:%M:%S"))
+    return (from_user, to_user, subject, body, json.dumps(attachments, ensure_ascii=False), is_read, created.strftime("%Y-%m-%d %H:%M:%S"))
 
 def gen_session(i, max_user_id):
     sid = ''.join(random.choices('0123456789abcdef', k=36))
@@ -380,7 +380,7 @@ def gen_session(i, max_user_id):
     data = rnd_json_kv(8, depth=2)
     created = datetime.now() - timedelta(days=random.randint(0, 3650))
     expires = created + timedelta(days=random.randint(1, 365))
-    return (sid, user_id, token, pymysql.converters.escape_string(str(data)), created.strftime("%Y-%m-%d %H:%M:%S"), expires.strftime("%Y-%m-%d %H:%M:%S"))
+    return (sid, user_id, token, json.dumps(data, ensure_ascii=False), created.strftime("%Y-%m-%d %H:%M:%S"), expires.strftime("%Y-%m-%d %H:%M:%S"))
 
 def gen_payment(i, max_user_id):
     order_id = random.randint(1, 20000000)
