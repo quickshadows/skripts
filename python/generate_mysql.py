@@ -281,7 +281,17 @@ def gen_user(i):
     created = datetime.now() - timedelta(days=random.randint(0, 3650))
     last_login = created + timedelta(days=random.randint(0, 3000))
     flags = random.randint(0, 255)
-    return (username, email, full_name, pymysql.converters.escape_string(str(profile)), bio, country, created.strftime("%Y-%m-%d %H:%M:%S"), last_login.strftime("%Y-%m-%d %H:%M:%S"), flags)
+    return (
+        username,
+        email,
+        full_name,
+        json.dumps(profile, ensure_ascii=False),  # ✅ правильный JSON
+        bio,
+        country,
+        created.strftime("%Y-%m-%d %H:%M:%S"),
+        last_login.strftime("%Y-%m-%d %H:%M:%S"),
+        flags
+    )
 
 def gen_product(i):
     sku = f"SKU-{i:012d}"
