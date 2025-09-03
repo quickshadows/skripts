@@ -88,9 +88,9 @@ CREATE TABLE IF NOT EXISTS users (
     created_at DATETIME,
     last_login DATETIME,
     flags INT,
-    INDEX idx_username (idx_username(32)),
-    INDEX idx_email (idx_email(128)),
-    INDEX idx_country (idx_country)
+    INDEX idx_username (username(32)),
+    INDEX idx_email (iemail(128)),
+    INDEX idx_country (country)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 """,
 
