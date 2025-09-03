@@ -25,10 +25,10 @@ except Exception:
 # Настройки подключения (заполните ваши данные или используйте строку из вопроса)
 # -----------------------
 DB = {
-    "host": "192.168.0.54",
+    "host": "localhost",
     "port": 3306,
     "user": "gen_user",
-    "password": "n@!fOXG|P*lQ9",
+    "password": "Passwd123",
     "database": "default_db",
     "charset": "utf8mb4",
     "cursorclass": pymysql.cursors.Cursor,
@@ -88,9 +88,9 @@ CREATE TABLE IF NOT EXISTS users (
     created_at DATETIME,
     last_login DATETIME,
     flags INT,
-    INDEX(idx_username(32)),
-    INDEX(idx_email(128)),
-    INDEX(idx_country)
+    INDEX idx_username (idx_username(32)),
+    INDEX idx_email (idx_email(128)),
+    INDEX idx_country (idx_country)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 """,
 
