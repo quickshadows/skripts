@@ -11,21 +11,36 @@ import string
 
 # ================== НАСТРОЙКИ ==================
 BUCKET_NAME = "my-test"
-FILE_PATH = "/tmp/test-bigfile.bin"
+FILE_PATH = "/mnt/dbaas/tmp/test-bigfile.bin"
 FILE_SIZE_GB =20  # можно менять 10-20
 PART_SIZE_MB = 100  # размер части для multipart
 REGION = "ru-1"
 ENDPOINT_URL = "https://s3.twcstorage.ru"
 
 # ================== ЛОГИ ==================
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)]
-)
-logger = logging.getLogger(__name__)
+LOG_FILE = "s3_multipart.log"
 
-# Включаем низкоуровневое логирование botocore (все HTTP-запросы/ответы)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+# формат логов
+formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+
+# вывод в консоль
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(formatter)
+
+# вывод в файл
+file_handler = logging.FileHandler(LOG_FILE, mode="a", encoding="utf-8")
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+# добавляем обработчики
+logger.addHandler(console_handler)
+logger.addHandler(file_handler)
+
+# включаем низкоуровневое логирование botocore (HTTP-запросы/ответы)
 boto3.set_stream_logger('botocore', logging.DEBUG)
 
 # ================== S3 клиент ==================
