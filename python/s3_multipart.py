@@ -10,7 +10,7 @@ import random
 import string
 
 # ================== НАСТРОЙКИ ==================
-BUCKET_NAME = "my-test"
+BUCKET_NAME = "31d5eb06-baket-backup-test"
 FILE_PATH = "/mnt/dbaas/tmp/test-bigfile.bin"
 FILE_SIZE_GB =20  # можно менять 10-20
 PART_SIZE_MB = 100  # размер части для multipart
