@@ -18,30 +18,48 @@ REGION = "ru-1"
 ENDPOINT_URL = "https://s3.twcstorage.ru"
 
 # ================== ЛОГИ ==================
-LOG_FILE = "s3_multipart.log"
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+# ================== ЛОГИ ==================
+LOG_FILE_MAIN = "s3_multipart.log"
+LOG_FILE_ERRORS = "s3_errors.log"
+LOG_FILE_REQUESTS = "s3_requests.log"
 
 # формат логов
 formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
-# вывод в консоль
-console_handler = logging.StreamHandler(sys.stdout)
-console_handler.setLevel(logging.INFO)
-console_handler.setFormatter(formatter)
+# --- общий лог ---
+logger = logging.getLogger("s3tester")
+logger.setLevel(logging.DEBUG)
 
-# вывод в файл
-file_handler = logging.FileHandler(LOG_FILE, mode="a", encoding="utf-8")
-file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(formatter)
+fh_main = logging.FileHandler(LOG_FILE_MAIN, mode="a", encoding="utf-8")
+fh_main.setLevel(logging.DEBUG)
+fh_main.setFormatter(formatter)
 
-# добавляем обработчики
-logger.addHandler(console_handler)
-logger.addHandler(file_handler)
+ch = logging.StreamHandler(sys.stdout)
+ch.setLevel(logging.INFO)
+ch.setFormatter(formatter)
 
-# включаем низкоуровневое логирование botocore (HTTP-запросы/ответы)
-boto3.set_stream_logger('botocore', logging.DEBUG)
+logger.addHandler(fh_main)
+logger.addHandler(ch)
+
+# --- ошибки отдельно ---
+error_logger = logging.getLogger("s3errors")
+error_logger.setLevel(logging.ERROR)
+
+fh_err = logging.FileHandler(LOG_FILE_ERRORS, mode="a", encoding="utf-8")
+fh_err.setLevel(logging.ERROR)
+fh_err.setFormatter(formatter)
+
+error_logger.addHandler(fh_err)
+
+# --- запросы/ответы boto3-botocore ---
+req_logger = logging.getLogger("botocore")
+req_logger.setLevel(logging.DEBUG)
+
+fh_req = logging.FileHandler(LOG_FILE_REQUESTS, mode="a", encoding="utf-8")
+fh_req.setLevel(logging.DEBUG)
+fh_req.setFormatter(formatter)
+
+req_logger.addHandler(fh_req)
 
 # ================== S3 клиент ==================
 s3 = boto3.client(
