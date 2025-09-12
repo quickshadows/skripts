@@ -8,12 +8,13 @@ import boto3
 import botocore
 import random
 import string
+from botocore.exceptions import ClientError
 
 # ================== НАСТРОЙКИ ==================
 BUCKET_NAME = "31d5eb06-baket-backup-test"
 FILE_PATH = "/mnt/dbaas/tmp/test-bigfile.bin"
-FILE_SIZE_GB =20  # можно менять 10-20
-PART_SIZE_MB = 100  # размер части для multipart
+FILE_SIZE_GB =31  # можно менять 10-20
+PART_SIZE_MB = 2000  # размер части для multipart
 REGION = "ru-1"
 ENDPOINT_URL = "https://s3.twcstorage.ru"
 
@@ -22,6 +23,7 @@ ENDPOINT_URL = "https://s3.twcstorage.ru"
 LOG_FILE_MAIN = "s3_multipart.log"
 LOG_FILE_ERRORS = "s3_errors.log"
 LOG_FILE_REQUESTS = "s3_requests.log"
+LOG_FILE_REQUESTS_v2 = "s3_requests_v2.log"
 
 # формат логов
 formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -60,6 +62,25 @@ fh_req.setLevel(logging.DEBUG)
 fh_req.setFormatter(formatter)
 
 req_logger.addHandler(fh_req)
+
+
+logger = logging.getLogger("s3responses")
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler(LOG_FILE_REQUESTS_v2, mode="a", encoding="utf-8")
+fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
+logger.addHandler(fh)
+
+def log_http_response(parsed, **kwargs):
+    status_code = parsed["ResponseMetadata"]["HTTPStatusCode"]
+    headers = parsed["ResponseMetadata"]["HTTPHeaders"]
+    logger.info(f"Response {status_code}, headers={headers}")
+
+session = boto3.session.Session()
+s3 = session.client("s3", endpoint_url=ENDPOINT_URL, region_name=REGION,
+                    aws_access_key_id=AWS_KEY, aws_secret_access_key=AWS_SECRET)
+
+# подписка на событие "after-call" для S3
+s3.meta.events.register("after-call.s3", log_http_response)
 
 # ================== S3 клиент ==================
 s3 = boto3.client(
