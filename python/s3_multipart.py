@@ -77,7 +77,7 @@ def log_http_response(parsed, **kwargs):
 
 session = boto3.session.Session()
 s3 = session.client("s3", endpoint_url=ENDPOINT_URL, region_name=REGION,
-                    aws_access_key_id=AWS_KEY, aws_secret_access_key=AWS_SECRET)
+                    aws_access_key_id=YBKVN39ND675D1MK5K1C, aws_secret_access_key=oTuwuQ7mYJungSsXyDY2VQSMayOays48DjV43hTp)
 
 # подписка на событие "after-call" для S3
 s3.meta.events.register("after-call.s3", log_http_response)
