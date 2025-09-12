@@ -63,6 +63,25 @@ fh_req.setFormatter(formatter)
 
 req_logger.addHandler(fh_req)
 
+
+logger = logging.getLogger("s3responses")
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler(LOG_FILE_REQUESTS_v2, mode="a", encoding="utf-8")
+fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
+logger.addHandler(fh)
+
+def log_http_response(parsed, **kwargs):
+    status_code = parsed["ResponseMetadata"]["HTTPStatusCode"]
+    headers = parsed["ResponseMetadata"]["HTTPHeaders"]
+    logger.info(f"Response {status_code}, headers={headers}")
+
+session = boto3.session.Session()
+s3 = session.client("s3", endpoint_url=ENDPOINT_URL, region_name=REGION,
+                    aws_access_key_id="YBKVN39ND675D1MK5K1C", aws_secret_access_key="oTuwuQ7mYJungSsXyDY2VQSMayOays48DjV43hTp")
+
+# подписка на событие "after-call" для S3
+s3.meta.events.register("after-call.s3", log_http_response)
+
 # ================== S3 клиент ==================
 s3 = boto3.client(
     "s3",
