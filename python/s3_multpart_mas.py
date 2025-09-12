@@ -9,78 +9,51 @@ import botocore
 import random
 import string
 from botocore.exceptions import ClientError
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ================== НАСТРОЙКИ ==================
 BUCKET_NAME = "31d5eb06-baket-backup-test"
 FILE_PATH = "/mnt/dbaas/tmp/test-bigfile.bin"
-FILE_SIZE_GB =31  # можно менять 10-20
-PART_SIZE_MB = 2000  # размер части для multipart
+FILE_SIZE_GB = 31          # можно менять
+PART_SIZE_MB = 20        # размер части для multipart
 REGION = "ru-1"
 ENDPOINT_URL = "https://s3.twcstorage.ru"
+PARALLEL_FILES = 5         # 🔹 Сколько файлов грузим одновременно (2–5)
 
-# ================== ЛОГИ ==================
 # ================== ЛОГИ ==================
 LOG_FILE_MAIN = "s3_multipart.log"
 LOG_FILE_ERRORS = "s3_errors.log"
 LOG_FILE_REQUESTS = "s3_requests.log"
-LOG_FILE_REQUESTS_v2 = "s3_requests_v2.log"
 
-# формат логов
 formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
-# --- общий лог ---
+# общий лог
 logger = logging.getLogger("s3tester")
 logger.setLevel(logging.DEBUG)
-
 fh_main = logging.FileHandler(LOG_FILE_MAIN, mode="a", encoding="utf-8")
 fh_main.setLevel(logging.DEBUG)
 fh_main.setFormatter(formatter)
-
 ch = logging.StreamHandler(sys.stdout)
 ch.setLevel(logging.INFO)
 ch.setFormatter(formatter)
-
 logger.addHandler(fh_main)
 logger.addHandler(ch)
 
-# --- ошибки отдельно ---
+# ошибки
 error_logger = logging.getLogger("s3errors")
 error_logger.setLevel(logging.ERROR)
-
 fh_err = logging.FileHandler(LOG_FILE_ERRORS, mode="a", encoding="utf-8")
 fh_err.setLevel(logging.ERROR)
 fh_err.setFormatter(formatter)
-
 error_logger.addHandler(fh_err)
 
-# --- запросы/ответы boto3-botocore ---
+# запросы boto3/botocore
 req_logger = logging.getLogger("botocore")
 req_logger.setLevel(logging.DEBUG)
-
 fh_req = logging.FileHandler(LOG_FILE_REQUESTS, mode="a", encoding="utf-8")
 fh_req.setLevel(logging.DEBUG)
 fh_req.setFormatter(formatter)
-
 req_logger.addHandler(fh_req)
-
-
-logger = logging.getLogger("s3responses")
-logger.setLevel(logging.INFO)
-fh = logging.FileHandler(LOG_FILE_REQUESTS_v2, mode="a", encoding="utf-8")
-fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
-logger.addHandler(fh)
-
-def log_http_response(parsed, **kwargs):
-    status_code = parsed["ResponseMetadata"]["HTTPStatusCode"]
-    headers = parsed["ResponseMetadata"]["HTTPHeaders"]
-    logger.info(f"Response {status_code}, headers={headers}")
-
-session = boto3.session.Session()
-s3 = session.client("s3", endpoint_url=ENDPOINT_URL, region_name=REGION,
-                    aws_access_key_id="YBKVN39ND675D1MK5K1C", aws_secret_access_key="oTuwuQ7mYJungSsXyDY2VQSMayOays48DjV43hTp")
-
-# подписка на событие "after-call" для S3
-s3.meta.events.register("after-call.s3", log_http_response)
 
 # ================== S3 клиент ==================
 s3 = boto3.client(
@@ -93,6 +66,7 @@ s3 = boto3.client(
 
 
 def generate_file(path: str, size_gb: int):
+    """Создаёт тестовый файл указанного размера (если нет)."""
     if os.path.exists(path):
         logger.info(f"Файл {path} уже существует, пропускаем создание")
         return
@@ -111,18 +85,19 @@ def generate_file(path: str, size_gb: int):
 
 
 def multipart_upload(file_path: str, bucket: str, key: str, part_size_mb: int = 100):
+    """Загрузка файла в S3 по multipart upload."""
     upload_id = None
     try:
-        logger.info(f"Инициализация multipart upload для {key}")
+        logger.info(f"[{key}] Инициализация multipart upload")
         mpu = s3.create_multipart_upload(Bucket=bucket, Key=key)
         upload_id = mpu["UploadId"]
-        logger.info(f"Создан multipart upload: UploadId={upload_id}")
+        logger.info(f"[{key}] UploadId={upload_id}")
 
         parts = []
         part_size = part_size_mb * 1024 * 1024
         total_size = os.path.getsize(file_path)
         total_parts = (total_size + part_size - 1) // part_size
-        logger.info(f"Размер файла {total_size:,} байт, частей будет {total_parts}")
+        logger.info(f"[{key}] Размер {total_size:,} байт, частей {total_parts}")
 
         with open(file_path, "rb") as f:
             part_number = 1
@@ -131,7 +106,7 @@ def multipart_upload(file_path: str, bucket: str, key: str, part_size_mb: int = 
                 if not data:
                     break
 
-                logger.info(f"Загрузка части {part_number}/{total_parts}, размер {len(data)} байт")
+                logger.info(f"[{key}] Загрузка части {part_number}/{total_parts}, {len(data)} байт")
                 response = s3.upload_part(
                     Bucket=bucket,
                     Key=key,
@@ -140,34 +115,44 @@ def multipart_upload(file_path: str, bucket: str, key: str, part_size_mb: int = 
                     Body=data
                 )
                 etag = response["ETag"]
-                logger.info(f"Часть {part_number} загружена, ETag={etag}")
+                logger.info(f"[{key}] Часть {part_number} загружена, ETag={etag}")
                 parts.append({"PartNumber": part_number, "ETag": etag})
                 part_number += 1
 
-        logger.info("Завершение multipart upload")
+        logger.info(f"[{key}] Завершение multipart upload")
         result = s3.complete_multipart_upload(
             Bucket=bucket,
             Key=key,
             UploadId=upload_id,
             MultipartUpload={"Parts": parts}
         )
-        logger.info(f"Загрузка завершена: {result}")
+        logger.info(f"[{key}] Загрузка завершена: {result}")
 
     except botocore.exceptions.ClientError as e:
-        logger.error(f"ClientError при multipart upload: {e}")
+        logger.error(f"[{key}] ClientError: {e}")
         if upload_id:
-            logger.warning(f"Прерывание multipart upload {upload_id}")
+            logger.warning(f"[{key}] Прерывание upload {upload_id}")
             s3.abort_multipart_upload(Bucket=bucket, Key=key, UploadId=upload_id)
-        raise
-    except botocore.exceptions.EndpointConnectionError as e:
-        logger.error(f"Ошибка подключения к endpoint: {e}")
         raise
     except Exception as e:
-        logger.exception(f"Неожиданная ошибка при multipart upload: {e}")
+        logger.exception(f"[{key}] Неожиданная ошибка: {e}")
         if upload_id:
-            logger.warning(f"Прерывание multipart upload {upload_id}")
+            logger.warning(f"[{key}] Прерывание upload {upload_id}")
             s3.abort_multipart_upload(Bucket=bucket, Key=key, UploadId=upload_id)
         raise
+
+
+def upload_one_file(iteration: int, file_path: str, bucket: str, part_size_mb: int, idx: int):
+    """Загрузка одного файла с уникальным ключом."""
+    object_key = f"test-bigfile-{iteration}-{idx}-" + \
+                 "".join(random.choices(string.ascii_lowercase + string.digits, k=6)) + ".bin"
+    logger.info(f"[TASK {idx}] Начало загрузки {object_key}")
+
+    multipart_upload(file_path, bucket, object_key, part_size_mb)
+
+    logger.info(f"[TASK {idx}] Удаление объекта {object_key} из S3")
+    s3.delete_object(Bucket=bucket, Key=object_key)
+    logger.info(f"[TASK {idx}] Объект {object_key} удалён")
 
 
 def main():
@@ -176,16 +161,20 @@ def main():
 
     while True:
         try:
-            object_key = f"test-bigfile-{iteration}-" + "".join(random.choices(string.ascii_lowercase + string.digits, k=6)) + ".bin"
-            logger.info(f"=== Итерация {iteration}: загрузка {object_key} ===")
+            logger.info(f"=== Итерация {iteration}: параллельная загрузка {PARALLEL_FILES} файлов ===")
 
-            multipart_upload(FILE_PATH, BUCKET_NAME, object_key, PART_SIZE_MB)
+            with ThreadPoolExecutor(max_workers=PARALLEL_FILES) as executor:
+                futures = [
+                    executor.submit(upload_one_file, iteration, FILE_PATH, BUCKET_NAME, PART_SIZE_MB, idx+1)
+                    for idx in range(PARALLEL_FILES)
+                ]
+                for future in as_completed(futures):
+                    try:
+                        future.result()
+                    except Exception as e:
+                        logger.error(f"Ошибка в задаче: {e}")
 
-            logger.info("Удаление объекта из S3")
-            s3.delete_object(Bucket=BUCKET_NAME, Key=object_key)
-            logger.info(f"Объект {object_key} удален из S3")
-
-            logger.info("Итерация завершена, пауза 5 секунд\n")
+            logger.info(f"Итерация {iteration} завершена, пауза 5 секунд\n")
             iteration += 1
             time.sleep(5)
 
