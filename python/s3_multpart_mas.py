@@ -27,7 +27,7 @@ FILE_SIZE_GB = 1           # размер тестового файла
 PART_SIZE_MB = 20          # размер части для multipart
 REGION = "ru-1"
 ENDPOINT_URL = "https://s3.twcstorage.ru"
-PARALLEL_FILES = 10        # сколько файлов грузим одновременно (2–5)
+PARALLEL_FILES = 50        # сколько файлов грузим одновременно (2–5)
 
 # ================== ЛОГИ ==================
 LOG_FILE_MAIN = "s3_multipart.log"
