@@ -69,8 +69,8 @@ s3 = boto3.client(
     "s3",
     endpoint_url=ENDPOINT_URL,
     region_name=REGION,
-    aws_access_key_id="B2UW7PYZZ3CDL9LKCROQ",
-    aws_secret_access_key="YdFn798ci9iwWxLCWzO62gaqrPBhbbAcUaCq7w7a",
+    aws_access_key_id="XA2UUWUEW2WKT3IIDZ1Z",
+    aws_secret_access_key="InwYkp2JtmzW96NpMfdDZFqyQGSWfA8JsDDMG8N2",
 )
 
 # ================== ЛОГИРОВАНИЕ ОШИБОК ==================
