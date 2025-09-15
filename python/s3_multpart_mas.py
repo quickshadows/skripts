@@ -129,31 +129,46 @@ def multipart_upload(file_path: str, bucket: str, key: str, part_size_mb: int = 
         logger.info(f"[{key}] Загрузка завершена: {result}")
 
     except botocore.exceptions.ClientError as e:
-        logger.error(f"[{key}] ClientError: {e}")
+        msg = f"S3 ClientError при multipart upload ({key}): {e}"
+        logger.error(msg)
+        error_logger.exception(msg)
         if upload_id:
-            logger.warning(f"[{key}] Прерывание upload {upload_id}")
+            logger.warning(f"Прерывание multipart upload {upload_id}")
             s3.abort_multipart_upload(Bucket=bucket, Key=key, UploadId=upload_id)
         raise
+    except botocore.exceptions.EndpointConnectionError as e:
+        msg = f"Ошибка подключения к endpoint при загрузке {key}: {e}"
+        logger.error(msg)
+        error_logger.exception(msg)
+        raise
     except Exception as e:
-        logger.exception(f"[{key}] Неожиданная ошибка: {e}")
+        msg = f"Неожиданная ошибка при multipart upload ({key}): {e}"
+        logger.exception(msg)
+        error_logger.exception(msg)
         if upload_id:
-            logger.warning(f"[{key}] Прерывание upload {upload_id}")
+            logger.warning(f"Прерывание multipart upload {upload_id}")
             s3.abort_multipart_upload(Bucket=bucket, Key=key, UploadId=upload_id)
         raise
 
 
 def upload_one_file(iteration: int, file_path: str, bucket: str, part_size_mb: int, idx: int):
     """Загрузка одного файла с уникальным ключом."""
-    object_key = f"test-bigfile-{iteration}-{idx}-" + \
-                 "".join(random.choices(string.ascii_lowercase + string.digits, k=6)) + ".bin"
-    logger.info(f"[TASK {idx}] Начало загрузки {object_key}")
+    try:
+        object_key = f"test-bigfile-{iteration}-{idx}-" + \
+                     "".join(random.choices(string.ascii_lowercase + string.digits, k=6)) + ".bin"
+        logger.info(f"[TASK {idx}] Начало загрузки {object_key}")
 
-    multipart_upload(file_path, bucket, object_key, part_size_mb)
+        multipart_upload(file_path, bucket, object_key, part_size_mb)
 
-    logger.info(f"[TASK {idx}] Удаление объекта {object_key} из S3")
-    s3.delete_object(Bucket=bucket, Key=object_key)
-    logger.info(f"[TASK {idx}] Объект {object_key} удалён")
+        logger.info(f"[TASK {idx}] Удаление объекта {object_key} из S3")
+        s3.delete_object(Bucket=bucket, Key=object_key)
+        logger.info(f"[TASK {idx}] Объект {object_key} удалён")
 
+    except Exception as e:
+        msg = f"Ошибка в итерации {iteration}, объект {object_key}: {e}"
+        logger.exception(msg)
+        error_logger.exception(msg)
+        raise
 
 def main():
     generate_file(FILE_PATH, FILE_SIZE_GB)
