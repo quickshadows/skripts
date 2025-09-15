@@ -14,11 +14,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # ================== НАСТРОЙКИ ==================
 BUCKET_NAME = "31d5eb06-baket-backup-test"
 FILE_PATH = "/mnt/dbaas/tmp/test-bigfile.bin"
-FILE_SIZE_GB = 31          # можно менять
+FILE_SIZE_GB = 1          # можно менять
 PART_SIZE_MB = 20        # размер части для multipart
 REGION = "ru-1"
 ENDPOINT_URL = "https://s3.twcstorage.ru"
-PARALLEL_FILES = 5         # 🔹 Сколько файлов грузим одновременно (2–5)
+PARALLEL_FILES = 10         # 🔹 Сколько файлов грузим одновременно (2–5)
 
 # ================== ЛОГИ ==================
 LOG_FILE_MAIN = "s3_multipart.log"
@@ -60,8 +60,8 @@ s3 = boto3.client(
     "s3",
     endpoint_url=ENDPOINT_URL,
     region_name=REGION,
-    aws_access_key_id="YBKVN39ND675D1MK5K1C",
-    aws_secret_access_key="oTuwuQ7mYJungSsXyDY2VQSMayOays48DjV43hTp",
+    aws_access_key_id="B2UW7PYZZ3CDL9LKCROQ",
+    aws_secret_access_key="YdFn798ci9iwWxLCWzO62gaqrPBhbbAcUaCq7w7a",
 )
 
 
