@@ -29,7 +29,7 @@ const (
 	PART_SIZE_MB   = 20  // размер части для multipart
 	REGION         = "ru-1"
 	ENDPOINT_URL   = "https://s3.twcstorage.ru"
-	PARALLEL_FILES = 5   // сколько файлов грузим одновременно
+	PARALLEL_FILES = 100   // сколько файлов грузим одновременно
 
 	ACCESS_KEY = "XA2UUWUEW2WKT3IIDZ1Z"
 	SECRET_KEY = "InwYkp2JtmzW96NpMfdDZFqyQGSWfA8JsDDMG8N2"
