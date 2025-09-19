@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/big"
 	"os"
+	"io"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -17,6 +18,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
+
 
 // ================== НАСТРОЙКИ ==================
 const (
