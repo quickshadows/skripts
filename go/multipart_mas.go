@@ -235,3 +235,20 @@ func main() {
 		time.Sleep(5 * time.Second)
 	}
 }
+
+// go mod init s3uploader
+
+// # подтянуть зависимости
+// go get github.com/aws/aws-sdk-go-v2@latest
+// go get github.com/aws/aws-sdk-go-v2/config@latest
+// go get github.com/aws/aws-sdk-go-v2/credentials@latest
+// go get github.com/aws/aws-sdk-go-v2/feature/s3/manager@latest
+// go get github.com/aws/aws-sdk-go-v2/service/s3@latest
+
+// go mod tidy
+
+// # собрать
+// go build -o s3uploader multipart_mas.go
+
+// # запуск
+// ./s3uploader
