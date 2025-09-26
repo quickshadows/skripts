@@ -1,13 +1,18 @@
 import psycopg2
 
+
 databases = [
-    "postgresql://gen_user:Passwd123@89.223.64.124:5432/default_db",
-    "postgresql://gen_user:Passwd123@217.25.89.213:5432/default_db",
-    "postgresql://gen_user:Passwd123@85.92.110.29:5432/default_db",
-    "postgresql://gen_user:Passwd123@217.25.89.89:5432/default_db",
-    "postgresql://gen_user:Passwd123@81.200.144.241:5432/default_db",
-    "postgresql://gen_user:Passwd123@217.25.89.88:5432/default_db",
-    "postgresql://gen_user:Passwd123@81.200.144.8:5432/default_db",
+    "postgresql://gen_user:Passwd123@89.223.71.12:5432/default_db",
+    "postgresql://gen_user:Passwd123@89.223.71.12:5432/db_write",
+    "postgresql://gen_user:Passwd123@89.223.71.12:5432/db1",
+    "postgresql://gen_user:Passwd123@89.223.71.12:5432/db2",
+    "postgresql://gen_user:Passwd123@89.223.71.12:5432/db3",
+    "postgresql://gen_user:Passwd123@89.223.71.12:5432/db4",
+    "postgresql://gen_user:Passwd123@89.223.71.12:5432/db5",
+    "postgresql://gen_user:Passwd123@89.223.71.12:5432/db6",
+    "postgresql://gen_user:Passwd123@89.223.71.12:5432/db7",
+    "postgresql://gen_user:Passwd123@89.223.71.12:5432/db8",
+    "postgresql://gen_user:Passwd123@89.223.71.12:5432/db9",
 ]
 
 for db_url in databases:
