@@ -105,6 +105,7 @@ databases=(
   "PostgreSQL 15 api backup-3 postgres15 1175"
   "PostgreSQL 16 api backup-3 postgres16 1175"
   "PostgreSQL 17 api backup-3 postgres17 1175"
+  "PostgreSQL 18 api backup-3 postgres18 1175"
 )
 
 for db in "${databases[@]}"; do
