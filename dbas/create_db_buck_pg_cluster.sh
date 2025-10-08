@@ -51,6 +51,9 @@ create_database() {
         \"password\": \"Passwd123\",
         \"for_all\": false
       },
+    \"replication\": {
+      \"count\": 3
+    },
       \"network\": {
         \"id\": \"network-3654798e575f4dd3b9ad3e9dec940ead\",
         \"floating_ip\": \"$floating_ip\",
@@ -101,11 +104,11 @@ find_first_free_ip() {
 
 # --- Основная логика ---
 databases=(
-  "PostgreSQL 14 api backup-3 postgres14 1175"
-  "PostgreSQL 15 api backup-3 postgres15 1175"
-  "PostgreSQL 16 api backup-3 postgres16 1175"
-  "PostgreSQL 17 api backup-3 postgres17 1175"
-  "PostgreSQL 18 api backup-3 postgres18 1175"
+  "PostgreSQL-cluster 14 api stage postgres14 1175"
+  "PostgreSQL-cluster 15 api stage postgres15 1175"
+  "PostgreSQL-cluster 16 api stage postgres16 1175"
+  "PostgreSQL-cluster 17 api stage postgres17 1175"
+  "PostgreSQL-cluster 18 api stage postgres18 1175"
 )
 
 for db in "${databases[@]}"; do
