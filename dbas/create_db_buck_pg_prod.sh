@@ -9,7 +9,7 @@ get_floating_ip() {
       "is_ddos_guard": false,
       "availability_zone": "spb-3"
     }' \
-    "https://timeweb.cloud/api/v1/databases")
+    "https://timeweb.cloud/api/v1/floating-ips")
 
   floating_ip=$(echo "$response_floating_ip" | jq -r '.ip.ip')
 
